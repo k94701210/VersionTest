@@ -1,4 +1,7 @@
-﻿EVALUATE 
+﻿\\開了一個 修復BUG的 branch
+
+
+EVALUATE 
 VAR USA_COUNT=COUNTROWS(
 FILTER(Sales,AND(Sales[Country]="USA",Sales[Product category]="BIKES")))
 RETURN
