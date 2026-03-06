@@ -1,0 +1,116 @@
+﻿EVALUATE 
+VAR USA_COUNT=COUNTROWS(
+FILTER(Sales,AND(Sales[Country]="USA",Sales[Product category]="BIKES")))
+RETURN
+ROW("美國腳踏車銷售",USA_COUNT)
+
+
+
+
+EVALUATE 
+VAR c=COUNTROWS(
+FILTER(Sales,(Sales[Country]="USA" && Sales[Product category]="BIKES" && Sales[State]="CALIFORNIA")))
+RETURN
+ROW("美國加州腳踏車銷售",c)
+
+
+
+
+EVALUATE 
+VAR NUSA_COUNT=COUNTROWS(
+FILTER(Sales,NOT(Sales[Country]="USA" && Sales[Product category]="BIKES")))
+RETURN
+ROW("美國外非腳踏車銷售",NUSA_COUNT)
+
+
+
+
+//usa && frence 訂單數
+
+EVALUATE
+ROW("美法訂單數",
+COUNTROWS(FILTER(Sales,Sales[Country] IN {"usa","FRENCE"})))
+
+
+
+
+EVALUATE
+ADDCOLUMNS(Sales,"國家中文名稱",
+SWITCH(Sales[Country],
+        "USA","美國",
+        "FRENCE","法國",
+        "GERMANY","德國",
+        "其他")
+        ) 
+
+//新增業績欄，200up>a+，100up>a，ELSE>b
+
+
+EVALUATE
+ADDCOLUMNS(Sales,"業績考核",
+SWITCH(TRUE,
+    (Sales[Quantity]*Sales[Price per item]-Sales[Sales plan]>200),"A",
+    (Sales[Quantity]*Sales[Price per item]-Sales[Sales plan]>100),"B",
+    "C"))
+    
+
+EVALUATE
+ADDCOLUMNS(Sales,"業績考核",
+SWITCH(TRUE,
+    Sales[Quantity]*Sales[Price per item]-Sales[Sales plan]>200,"A",
+    Sales[Quantity]*Sales[Price per item]-Sales[Sales plan]>100,"B",
+    "C"))
+    
+    
+    
+     
+//該筆訂單佔國家銷售百分比
+EVALUATE
+
+var total=sUmx(Sales,Sales[Sales fact])
+
+var usa=SUMX(FILTER(Sales,Sales[Country]="usa"),[Sales fact])
+var FRA=SUMX(FILTER(Sales,Sales[Country]="france"),[Sales fact])
+var ger=SUMX(FILTER(Sales,Sales[Country]="germany"),[Sales fact])
+var great=SUMX(FILTER(Sales,Sales[Country]="great britain"),[Sales fact])        
+                
+                
+RETURN
+
+topn(10,
+ADDCOLUMNS(Sales,"國家%",
+        SWITCH(Sales[Country],
+                "usa",round(Sales[Sales fact]/usa,6)*100 & "%",
+                "france",round(Sales[Sales fact]/FRA,6)*100 & "%",
+                "germany",round(Sales[Sales fact]/FRA,6)*100 & "%",
+                "great britain",round(Sales[Sales fact]/FRA,6)*100 & "%",
+                "異常"),
+            "全部銷售佔比",round([Sales fact]/total,6)*100 & "%"),
+          [國家%],desc)
+ORDER BY [業績] deSC
+        
+      
+
+//EVALUATE
+//ROW("狀態",BITAND(13,2))
+
+EVALUATE
+
+var total=sUmx(Sales,Sales[Sales fact])
+
+var usa=SUMX(FILTER(Sales,Sales[Country]="usa"),[Sales fact])
+var france=SUMX(FILTER(Sales,Sales[Country]="france"),[Sales fact])
+var germany=SUMX(FILTER(Sales,Sales[Country]="germany"),[Sales fact])
+var great=SUMX(FILTER(Sales,Sales[Country]="great britain"),[Sales fact])
+
+RETURN
+ROW("總銷金額",total,
+    "美國售佔比",ROUND(usa/total,3)*100 & "%",
+    "法國售佔比",ROUND(france/total,3)*100 & "%",
+    "德國售佔比",ROUND(germany/total,3)*100 & "%",
+    "great britain售佔比",ROUND(great/total,3 )*100 & "%"
+             )     
+             
+             
+EVALUATE 
+row{1,2,3}      
