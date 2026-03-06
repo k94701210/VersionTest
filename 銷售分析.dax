@@ -1,6 +1,6 @@
 ﻿\\開了一個 修復BUG的 branch
 
-
+在MAIN看到這個代表我首次用了merge 喔
 EVALUATE 
 VAR USA_COUNT=COUNTROWS(
 FILTER(Sales,AND(Sales[Country]="USA",Sales[Product category]="BIKES")))
